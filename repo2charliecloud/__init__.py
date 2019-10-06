@@ -1,7 +1,7 @@
 import subprocess
 import argparse
 from urllib.parse import urlparse
-from repo2docker.app import Repo2Docker
+from repo2docker.__main__ import make_r2d
 
 def resolve_ref(repo_url, ref):
     """
@@ -42,26 +42,7 @@ def readable_image_name(repo, resolved_ref):
 
 
 def main():
-    argparser = argparse.ArgumentParser()
-
-    argparser.add_argument(
-        'repo',
-        help='Repository to build'
-    )
-
-    argparser.add_argument(
-        '--ref',
-        help='Remote repository reference to build. Defaults to master',
-        default='master'
-    )
-
-    args = argparser.parse_args()
-
-    resolved_ref = resolve_ref(args.repo, args.ref)
-    r2d = Repo2Docker()
-    r2d.repo = args.repo
-    r2d.ref = resolved_ref
-    r2d.output_image_spec = readable_image_name(args.repo, resolved_ref)
+    r2d = make_r2d()
     # charliecloud doesn't read ENV from r2d
     # so we explicitly save it and load it back
     r2d.appendix = r"""
